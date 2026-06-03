@@ -127,7 +127,7 @@ jobs:
 
     environment:
       name: production
-      url: https://swagstore.example.com   # ← thay bằng URL thật
+      url: https://swagestore-production.up.railway.app   # ← thay bằng URL thật
 
     steps:
       - uses: actions/checkout@v4
