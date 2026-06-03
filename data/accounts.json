@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1780467542539,
+    "name": "tester1",
+    "email": "tester1@gmail.com",
+    "address": "123",
+    "passwordHash": "$2a$10$RQIsEijhi6JKIwTn9NukkeaYwWcCTJHgIhUMewStg/KHFq69AGSv2",
+    "role": "customer",
+    "createdAt": "2026-06-03T06:19:02.610Z"
+  }
+]

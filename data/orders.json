@@ -1,0 +1,43 @@
+[
+  {
+    "id": "ORD-1780467555720",
+    "userId": 1780467542539,
+    "email": "tester1@gmail.com",
+    "items": [
+      {
+        "product": {
+          "id": 1,
+          "name": "Sauce Labs Backpack",
+          "price": 29.99,
+          "image": "/images/backpack.svg",
+          "category": "Accessories",
+          "type": "Backpack",
+          "badge": "Bestseller",
+          "desc": "Carry your test scripts in style. Durable canvas, laptop sleeve, padded straps."
+        },
+        "qty": 1,
+        "subtotal": 29.99
+      },
+      {
+        "product": {
+          "id": 2,
+          "name": "Sauce Labs Bike Light",
+          "price": 9.99,
+          "image": "/images/bike-light.svg",
+          "category": "Outdoor",
+          "type": "Bike Light",
+          "badge": null,
+          "desc": "A red light and white light that is guaranteed to be seen in the dark."
+        },
+        "qty": 1,
+        "subtotal": 9.99
+      }
+    ],
+    "total": 43.18,
+    "name": "tester1",
+    "address": "123",
+    "placedAt": "13:19:15 3/6/2026",
+    "createdAt": "2026-06-03T06:19:15.752Z",
+    "status": "confirmed"
+  }
+]
