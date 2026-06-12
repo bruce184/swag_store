@@ -127,7 +127,7 @@ jobs:
 
     environment:
       name: production
-      url: https://swagestore-production.up.railway.app   # ← thay bằng URL thật
+      url: https://swagstore-nodejsblog.up.railway.app 
 
     steps:
       - uses: actions/checkout@v4
