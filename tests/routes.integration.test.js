@@ -2,7 +2,7 @@
 
 const fs       = require('fs');
 const path     = require('path');
-const request  = require('supertest');
+const request  = require('supertest'); // For Integration Testing 
 const createApp = require('../app');
 const Account  = require('../models/Account');
 const Order    = require('../models/Order');
@@ -36,7 +36,7 @@ afterEach(() => {
 
 // ── Helper: login agent ───────────────────────────────────────
 async function loginAgent(email, password) {
-  const agent = request.agent(app);
+  const agent = request.agent(app); // For keep track of user session (cookies)
   Account.add({ name: 'Test', email, password, address: '1 St' });
   await agent.post('/login').send(`email=${email}&password=${password}`);
   return agent;
