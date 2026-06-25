@@ -53,6 +53,14 @@ exports.addToCart = (req, res) => {
 // GET /cart
 exports.showCart = (req, res) => {
   const cart = getCart(req);
+  let couponMessage = null;
+  let couponError = null;
+  const query = req.query || {};
+  if (query.couponSuccess === '1') {
+    couponMessage = `Coupon "${cart.couponCode}" applied successfully! (${cart.discountPercent}% off)`;
+  } else if (query.couponError === '1') {
+    couponError = 'Invalid coupon code.';
+  }
   res.render('cart', {
     lines:     cart.lines,
     subtotal:  cart.subtotal,
@@ -60,6 +68,12 @@ exports.showCart = (req, res) => {
     total:     cart.total,
     cartCount: cart.count,
     empty:     cart.count === 0,
+    couponCode:      cart.couponCode,
+    discountPercent: cart.discountPercent,
+    discountAmount:  cart.discountAmount,
+    discountedSubtotal: cart.discountedSubtotal,
+    couponMessage,
+    couponError,
   });
 };
 
@@ -88,6 +102,19 @@ exports.clearCart = (req, res) => {
   res.redirect('/cart');
 };
 
+// POST /cart/coupon
+exports.applyCoupon = (req, res) => {
+  const { couponCode } = req.body;
+  const cart = getCart(req);
+  const success = cart.applyCoupon(couponCode);
+  saveCart(req, cart);
+  if (success) {
+    res.redirect('/cart?couponSuccess=1');
+  } else {
+    res.redirect('/cart?couponError=1');
+  }
+};
+
 // GET /checkout
 exports.showCheckout = (req, res) => {
   const cart = getCart(req);
@@ -102,6 +129,10 @@ exports.showCheckout = (req, res) => {
     name:      user.name || '',
     email:     user.email || '',
     address:   user.address || '',
+    couponCode:      cart.couponCode,
+    discountPercent: cart.discountPercent,
+    discountAmount:  cart.discountAmount,
+    discountedSubtotal: cart.discountedSubtotal,
   });
 };
 

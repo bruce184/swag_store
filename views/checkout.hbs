@@ -57,6 +57,10 @@
       {{/each}}
       <div class="summary-divider"></div>
       <div class="summary-row"><span>Subtotal</span><span>${{subtotal}}</span></div>
+      {{#if couponCode}}
+      <div class="summary-row" style="color: #10b981;"><span>Discount ({{discountPercent}}% [{{couponCode}}])</span><span>-${{discountAmount}}</span></div>
+      <div class="summary-row"><span>Discounted Subtotal</span><span>${{discountedSubtotal}}</span></div>
+      {{/if}}
       <div class="summary-row"><span>Tax (8%)</span><span>${{tax}}</span></div>
       <div class="summary-row summary-total"><span>Total</span><span>${{total}}</span></div>
     </aside>

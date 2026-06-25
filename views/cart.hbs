@@ -51,8 +51,27 @@
     <aside class="cart-summary">
       <h2 class="summary-title">Order Summary</h2>
       <div class="summary-row"><span>Subtotal</span><span>${{subtotal}}</span></div>
+      {{#if couponCode}}
+      <div class="summary-row" style="color: #10b981;"><span>Discount ({{discountPercent}}% [{{couponCode}}])</span><span>-${{discountAmount}}</span></div>
+      <div class="summary-row"><span>Discounted Subtotal</span><span>${{discountedSubtotal}}</span></div>
+      {{/if}}
       <div class="summary-row"><span>Tax (8%)</span><span>${{tax}}</span></div>
       <div class="summary-row summary-total"><span>Total</span><span>${{total}}</span></div>
+
+      <div class="summary-divider" style="margin: 15px 0; border-top: 1px solid #e5e7eb;"></div>
+
+      {{#if couponMessage}}
+      <div class="alert alert-success" style="margin: 10px 0; padding: 8px; font-size: 0.9rem; border-radius: 4px; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;">{{couponMessage}}</div>
+      {{/if}}
+      {{#if couponError}}
+      <div class="alert alert-error" style="margin: 10px 0; padding: 8px; font-size: 0.9rem; border-radius: 4px; background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5;">{{couponError}}</div>
+      {{/if}}
+
+      <form method="POST" action="/cart/coupon" class="coupon-form" style="margin: 15px 0 20px 0; display: flex; gap: 8px;">
+        <input type="text" name="couponCode" class="form-input" placeholder="Promo code" value="{{#if couponCode}}{{couponCode}}{{/if}}" style="padding: 8px 12px; font-size: 0.9rem; flex-grow: 1; border: 1px solid #d1d5db; border-radius: 4px;">
+        <button type="submit" class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem; border-radius: 4px; cursor: pointer; white-space: nowrap;">Apply</button>
+      </form>
+
       <a href="/checkout" class="btn-primary btn-full">Proceed to Checkout →</a>
     </aside>
   </div>

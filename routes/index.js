@@ -11,6 +11,7 @@ router.get('/cart',         shopCtrl.showCart);
 router.post('/cart/update', shopCtrl.updateCart);
 router.post('/cart/remove', shopCtrl.removeFromCart);
 router.post('/cart/clear',  shopCtrl.clearCart);
+router.post('/cart/coupon', shopCtrl.applyCoupon);
 
 // ── Checkout & Orders (login required) ───────────────────────
 router.get ('/checkout', authCtrl.requireLogin, shopCtrl.showCheckout);

@@ -110,6 +110,42 @@ describe('showCart', () => {
     expect(args.cartCount).toBe(2);
     expect(args.subtotal).toBeCloseTo(59.98, 2);
   });
+
+  test('passes coupon variables to template when coupon is active', () => {
+    const req = {
+      session: {
+        cart: {
+          items: { '1': { product: { id:1, price:10.0 }, qty: 2 } },
+          couponCode: 'SPRING20',
+          discountPercent: 20
+        }
+      },
+      query: { couponSuccess: '1' }
+    };
+    const res = mockRes();
+    shopCtrl.showCart(req, res);
+    const args = res.render.mock.calls[0][1];
+    expect(args.couponCode).toBe('SPRING20');
+    expect(args.discountPercent).toBe(20);
+    expect(args.discountAmount).toBeCloseTo(4.00, 2);
+    expect(args.discountedSubtotal).toBeCloseTo(16.00, 2);
+    expect(args.couponMessage).toContain('applied successfully');
+  });
+
+  test('passes coupon error variable to template when coupon fails', () => {
+    const req = {
+      session: {
+        cart: {
+          items: { '1': { product: { id:1, price:10.0 }, qty: 2 } }
+        }
+      },
+      query: { couponError: '1' }
+    };
+    const res = mockRes();
+    shopCtrl.showCart(req, res);
+    const args = res.render.mock.calls[0][1];
+    expect(args.couponError).toBe('Invalid coupon code.');
+  });
 });
 
 describe('updateCart / removeFromCart / clearCart', () => {
@@ -161,6 +197,26 @@ describe('showCheckout', () => {
       name: 'Alice', email: 'alice@x.com', address: '99 St',
     }));
   });
+
+  test('passes coupon details to checkout template when coupon is active', () => {
+    const req = {
+      session: {
+        user: { name: 'Alice', email: 'alice@x.com', address: '99 St' },
+        cart: {
+          items: { '1': { product: { id:1, price:10.0 }, qty: 2 } },
+          couponCode: 'SPRING20',
+          discountPercent: 20
+        }
+      }
+    };
+    const res = mockRes();
+    shopCtrl.showCheckout(req, res);
+    const args = res.render.mock.calls[0][1];
+    expect(args.couponCode).toBe('SPRING20');
+    expect(args.discountPercent).toBe(20);
+    expect(args.discountAmount).toBeCloseTo(4.00, 2);
+    expect(args.discountedSubtotal).toBeCloseTo(16.00, 2);
+  });
 });
 
 describe('placeOrder', () => {
@@ -199,5 +255,31 @@ describe('showOrderHistory', () => {
     expect(res.render).toHaveBeenCalledWith('order-history', expect.objectContaining({
       orders: expect.arrayContaining([expect.objectContaining({ id: 'ORD-T' })]),
     }));
+  });
+});
+
+describe('applyCoupon', () => {
+  test('applies valid coupon, saves to session, and redirects with success status', () => {
+    const req = {
+      session: { cart: { items: { '1': { product: { id:1, price:10.0 }, qty: 2 } } } },
+      body: { couponCode: 'SPRING20' }
+    };
+    const res = mockRes();
+    shopCtrl.applyCoupon(req, res);
+    expect(req.session.cart.couponCode).toBe('SPRING20');
+    expect(req.session.cart.discountPercent).toBe(20);
+    expect(res.redirect).toHaveBeenCalledWith('/cart?couponSuccess=1');
+  });
+
+  test('rejects invalid coupon and redirects with error status', () => {
+    const req = {
+      session: { cart: { items: { '1': { product: { id:1, price:10.0 }, qty: 2 } } } },
+      body: { couponCode: 'INVALID_CODE' }
+    };
+    const res = mockRes();
+    shopCtrl.applyCoupon(req, res);
+    expect(req.session.cart.couponCode).toBeNull();
+    expect(req.session.cart.discountPercent).toBe(0);
+    expect(res.redirect).toHaveBeenCalledWith('/cart?couponError=1');
   });
 });
