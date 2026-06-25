@@ -99,7 +99,7 @@ jobs:
               console.log('✅ App started on port', server.address().port);
               server.close(() => process.exit(0));
             });
-          " || true
+          "
 
       - name: Create release archive
         run: |

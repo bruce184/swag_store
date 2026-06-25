@@ -133,3 +133,36 @@ describe('Cart.toJSON()', () => {
     expect(c2.subtotal).toBeCloseTo(c1.subtotal, 2);
   });
 });
+
+describe('Cart coupon codes', () => {
+  test('applies valid coupon', () => {
+    const c = new Cart();
+    c.add(P1, 2); // 59.98
+    const success = c.applyCoupon('SPRING20');
+    expect(success).toBe(true);
+    expect(c.couponCode).toBe('SPRING20');
+    expect(c.discountPercent).toBe(20);
+    expect(c.discountAmount).toBeCloseTo(12.00, 2); // 20% of 59.98 = 11.996 -> 12.00
+    expect(c.discountedSubtotal).toBeCloseTo(47.98, 2);
+    expect(c.tax).toBeCloseTo(47.98 * 0.08, 2);
+    expect(c.total).toBeCloseTo(47.98 * 1.08, 2);
+  });
+
+  test('rejects invalid coupon', () => {
+    const c = new Cart();
+    c.add(P1, 2);
+    const success = c.applyCoupon('INVALID');
+    expect(success).toBe(false);
+    expect(c.couponCode).toBeNull();
+    expect(c.discountPercent).toBe(0);
+  });
+
+  test('clears coupon when cart is cleared', () => {
+    const c = new Cart();
+    c.add(P1, 2);
+    c.applyCoupon('SUMMER30');
+    c.clear();
+    expect(c.couponCode).toBeNull();
+    expect(c.discountPercent).toBe(0);
+  });
+});

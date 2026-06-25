@@ -3,6 +3,8 @@
 class Cart {
   constructor(sessionCart = {}) {
     this.items = sessionCart.items || {};
+    this.couponCode = sessionCart.couponCode || null;
+    this.discountPercent = sessionCart.discountPercent || 0;
   }
 
   add(product, qty = 1) {
@@ -29,6 +31,38 @@ class Cart {
 
   clear() {
     this.items = {};
+    this.couponCode = null;
+    this.discountPercent = 0;
+  }
+
+  applyCoupon(code) {
+    const validCoupons = {
+      'WINTER10': 10,
+      'SPRING20': 20,
+      'SUMMER30': 30
+    };
+    if (!code) {
+      this.couponCode = null;
+      this.discountPercent = 0;
+      return false;
+    }
+    const upperCode = String(code).toUpperCase().trim();
+    if (validCoupons[upperCode]) {
+      this.couponCode = upperCode;
+      this.discountPercent = validCoupons[upperCode];
+      return true;
+    }
+    this.couponCode = null;
+    this.discountPercent = 0;
+    return false;
+  }
+
+  get discountAmount() {
+    return +(this.subtotal * (this.discountPercent / 100)).toFixed(2);
+  }
+
+  get discountedSubtotal() {
+    return +(this.subtotal - this.discountAmount).toFixed(2);
   }
 
   get lines() {
@@ -48,15 +82,19 @@ class Cart {
   }
 
   get tax() {
-    return +(this.subtotal * 0.08).toFixed(2);
+    return +(this.discountedSubtotal * 0.08).toFixed(2);
   }
 
   get total() {
-    return +(this.subtotal + this.tax).toFixed(2);
+    return +(this.discountedSubtotal + this.tax).toFixed(2);
   }
 
   toJSON() {
-    return { items: this.items };
+    return {
+      items: this.items,
+      couponCode: this.couponCode,
+      discountPercent: this.discountPercent
+    };
   }
 }
 
