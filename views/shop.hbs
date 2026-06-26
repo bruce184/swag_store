@@ -4,22 +4,36 @@
   <p class="hero-sub">Gear that says you care about quality — inside and out.</p>
 </div>
 
+<form class="shop-search" method="GET" action="/">
+  <input type="hidden" name="category" value="{{activeCategory}}">
+  <input type="hidden" name="type" value="{{activeType}}">
+  <input type="hidden" name="sort" value="{{activeSort}}">
+  <label class="search-label" for="product-search">Search products</label>
+  <div class="search-row">
+    <input id="product-search" class="search-input" type="search" name="q" value="{{searchQuery}}" placeholder="Search by product name or description">
+    <button class="btn-search" type="submit">Search</button>
+    {{#if searchQuery}}
+    <a class="btn-clear-search" href="/?category={{activeCategory}}&type={{activeType}}&sort={{activeSort}}">Clear</a>
+    {{/if}}
+  </div>
+</form>
+
 <div class="shop-controls">
   <div class="filter-pills">
-    <a href="/?type={{activeType}}&sort={{activeSort}}" class="pill {{#if (eq activeCategory 'all')}}pill-active{{/if}}">All</a>
+    <a href="/?type={{activeType}}&sort={{activeSort}}&q={{searchQuery}}" class="pill {{#if (eq activeCategory 'all')}}pill-active{{/if}}">All</a>
     {{#each categories}}
-    <a href="/?category={{this}}&type={{../activeType}}&sort={{../activeSort}}" class="pill {{#if (eq this ../activeCategory)}}pill-active{{/if}}">{{this}}</a>
+    <a href="/?category={{this}}&type={{../activeType}}&sort={{../activeSort}}&q={{../searchQuery}}" class="pill {{#if (eq this ../activeCategory)}}pill-active{{/if}}">{{this}}</a>
     {{/each}}
   </div>
   <div class="filter-pills">
-    <a href="/?category={{activeCategory}}&sort={{activeSort}}" class="pill {{#if (eq activeType 'all')}}pill-active{{/if}}">All Types</a>
+    <a href="/?category={{activeCategory}}&sort={{activeSort}}&q={{searchQuery}}" class="pill {{#if (eq activeType 'all')}}pill-active{{/if}}">All Types</a>
     {{#each types}}
-    <a href="/?category={{../activeCategory}}&type={{this}}&sort={{../activeSort}}" class="pill {{#if (eq this ../activeType)}}pill-active{{/if}}">{{this}}</a>
+    <a href="/?category={{../activeCategory}}&type={{this}}&sort={{../activeSort}}&q={{../searchQuery}}" class="pill {{#if (eq this ../activeType)}}pill-active{{/if}}">{{this}}</a>
     {{/each}}
   </div>
   <div class="sort-wrap">
     <label class="sort-label">Sort</label>
-    <select class="sort-select" onchange="location='/?category={{activeCategory}}&type={{activeType}}&sort='+this.value">
+    <select class="sort-select" onchange="location='/?category={{activeCategory}}&type={{activeType}}&q={{searchQuery}}&sort='+this.value">
       <option value="default"    {{#if (eq activeSort 'default')   }}selected{{/if}}>Featured</option>
       <option value="name"       {{#if (eq activeSort 'name')      }}selected{{/if}}>A → Z</option>
       <option value="price-asc"  {{#if (eq activeSort 'price-asc') }}selected{{/if}}>Price ↑</option>
@@ -27,6 +41,14 @@
     </select>
   </div>
 </div>
+
+{{#if noSearchResults}}
+<section class="empty-state">
+  <h2 class="empty-title">No products found</h2>
+  <p class="empty-sub">Try another keyword or clear the search to view all SwagStore items.</p>
+  <a class="btn-primary" href="/?category={{activeCategory}}&type={{activeType}}&sort={{activeSort}}">Clear search</a>
+</section>
+{{/if}}
 
 <div class="product-grid">
   {{#each products}}

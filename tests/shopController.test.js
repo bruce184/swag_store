@@ -50,6 +50,35 @@ describe('showShop', () => {
     expect(products.every(p => p.type === 'T-Shirt')).toBe(true);
   });
 
+  test('searches products by name', () => {
+    const req = { session: {}, query: { q: 'backpack' } };
+    const res = mockRes();
+    shopCtrl.showShop(req, res);
+    const { products, searchQuery, noSearchResults } = res.render.mock.calls[0][1];
+    expect(searchQuery).toBe('backpack');
+    expect(noSearchResults).toBe(false);
+    expect(products).toHaveLength(1);
+    expect(products[0].name).toMatch(/backpack/i);
+  });
+
+  test('searches products by description', () => {
+    const req = { session: {}, query: { q: 'wrinkle-free' } };
+    const res = mockRes();
+    shopCtrl.showShop(req, res);
+    const { products } = res.render.mock.calls[0][1];
+    expect(products).toHaveLength(1);
+    expect(products[0].desc).toMatch(/wrinkle-free/i);
+  });
+
+  test('marks empty search results', () => {
+    const req = { session: {}, query: { q: 'not-a-real-product' } };
+    const res = mockRes();
+    shopCtrl.showShop(req, res);
+    const { products, noSearchResults } = res.render.mock.calls[0][1];
+    expect(products).toHaveLength(0);
+    expect(noSearchResults).toBe(true);
+  });
+
   test('sorts by price ascending', () => {
     const req = { session: {}, query: { sort: 'price-asc' } };
     const res = mockRes();

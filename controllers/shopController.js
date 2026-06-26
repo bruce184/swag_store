@@ -13,14 +13,22 @@ function saveCart(req, cart) {
 
 // GET /
 exports.showShop = (req, res) => {
-  const { category, type, sort } = req.query;
+  const { category, type, sort, q } = req.query;
   let products = Product.getAll();
+  const searchQuery = (q || '').trim();
 
   if (category && category !== 'all') {
     products = products.filter(p => p.category === category);
   }
   if (type && type !== 'all') {
     products = products.filter(p => p.type === type);
+  }
+  if (searchQuery) {
+    const keyword = searchQuery.toLowerCase();
+    products = products.filter(product =>
+      product.name.toLowerCase().includes(keyword) ||
+      product.desc.toLowerCase().includes(keyword)
+    );
   }
   if (sort === 'price-asc')  products.sort((a, b) => a.price - b.price);
   if (sort === 'price-desc') products.sort((a, b) => b.price - a.price);
@@ -34,6 +42,8 @@ exports.showShop = (req, res) => {
     activeCategory: category || 'all',
     activeType:     type     || 'all',
     activeSort:     sort     || 'default',
+    searchQuery,
+    noSearchResults: searchQuery && products.length === 0,
     cartCount:      cart.count,
   });
 };

@@ -59,6 +59,19 @@ describe('GET /', () => {
     const res = await request(app).get('/?sort=price-asc');
     expect(res.status).toBe(200);
   });
+
+  test('searches products by keyword', async () => {
+    const res = await request(app).get('/?q=backpack');
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/Sauce Labs Backpack/i);
+    expect(res.text).not.toMatch(/Sauce Labs Bike Light/i);
+  });
+
+  test('shows empty state when search has no matches', async () => {
+    const res = await request(app).get('/?q=not-a-real-product');
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/No products found/i);
+  });
 });
 
 // ── Cart ──────────────────────────────────────────────────────
